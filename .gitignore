@@ -1,0 +1,8 @@
+node_modules/
+docs/.vitepress/dist/
+docs/.vitepress/cache/
+.vitepress/cache/
+APS-Research-Suite.html
+*.log
+_edge_*
+_dom_*.html
