@@ -69,3 +69,7 @@
     padding: 4px 2px;
   }
 }
+
+body {
+  zoom: 1.05;
+}
