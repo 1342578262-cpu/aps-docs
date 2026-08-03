@@ -55,3 +55,17 @@
 .vp-doc {
   font-size: 18px;
 }
+
+.vp-doc .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+  .vp-doc .katex-display {
+    text-align: left;
+    padding: 4px 2px;
+  }
+}
