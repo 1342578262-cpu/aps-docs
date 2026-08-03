@@ -3,7 +3,7 @@ cd /d "%~dp0"
 set "PROJ=%~dp0"
 set "PROJ=%PROJ:~0,-1%"
 set "GIT=C:\Users\13425\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\git\cmd\git.exe"
-set "SD=safe.directory=C:/Users/13425/Desktop/AI/1/codex-skill-docs-vitepress"
+set "SD=safe.directory=%PROJ:\=/%"
 if not exist "%GIT%" (
   echo Git not found: %GIT%
   pause
