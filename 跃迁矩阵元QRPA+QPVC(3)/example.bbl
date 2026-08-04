@@ -1,0 +1,48 @@
+\begin{thebibliography}{6}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Kamuntavičius et~al.(2001)Kamuntavičius, Kalinauskas, Barrett, Mickevičius, and Germanas]{KAMUNTAVICIUS2001191}
+G.P. Kamuntavičius, R.K. Kalinauskas, B.R. Barrett, S.~Mickevičius, and D.~Germanas.
+\newblock The general harmonic-oscillator brackets: compact expression, symmetries, sums and fortran code.
+\newblock \emph{Nuclear Physics A}, 695\penalty0 (1):\penalty0 191--201, 2001.
+\newblock ISSN 0375-9474.
+\newblock \doi{https://doi.org/10.1016/S0375-9474(01)01101-0}.
+\newblock URL \url{https://www.sciencedirect.com/science/article/pii/S0375947401011010}.
+
+\bibitem[Lv et~al.(2022)Lv, Niu, Fang, and Bai]{PhysRevC.105.044331}
+W.~L. Lv, Y.~F. Niu, D.~L. Fang, and C.~L. Bai.
+\newblock Single-state or low-lying-states dominance mechanism of $2\ensuremath{\nu}\ensuremath{\beta}\ensuremath{\beta}$-decay nuclear matrix elements.
+\newblock \emph{Phys. Rev. C}, 105:\penalty0 044331, Apr 2022.
+\newblock \doi{10.1103/PhysRevC.105.044331}.
+\newblock URL \url{https://link.aps.org/doi/10.1103/PhysRevC.105.044331}.
+
+\bibitem[Park et~al.(2003)Park, Marcucci, Schiavilla, Viviani, Kievsky, Rosati, Kubodera, Min, and Rho]{PhysRevC.67.055206}
+T.-S. Park, L.~E. Marcucci, R.~Schiavilla, M.~Viviani, A.~Kievsky, S.~Rosati, K.~Kubodera, D.-P. Min, and M.~Rho.
+\newblock Parameter-free effective field theory calculation for the solar proton-fusion and hep processes.
+\newblock \emph{Phys. Rev. C}, 67:\penalty0 055206, May 2003.
+\newblock \doi{10.1103/PhysRevC.67.055206}.
+\newblock URL \url{https://link.aps.org/doi/10.1103/PhysRevC.67.055206}.
+
+\bibitem[Suhonen and Jouni(2013)]{Suhonen2013From}
+Suhonen and Jouni.
+\newblock From nucleons to nucleus. concepts of microscopic nuclear theory.
+\newblock \emph{Springer Berlin}, 2013.
+
+\bibitem[Varshalovich et~al.(1988)Varshalovich, Moskalev, and Khersonskii]{doi:10.1142/0270}
+D~A Varshalovich, A~N Moskalev, and V~K Khersonskii.
+\newblock \emph{Quantum Theory of Angular Momentum}.
+\newblock WORLD SCIENTIFIC, 1988.
+\newblock URL \url{https://www.worldscientific.com/doi/abs/10.1142/0270}.
+
+\bibitem[Wu et~al.(2025)Wu, Bai, Fang, Niu, Sagawa, and Zhang]{Wu_2025}
+M.D. Wu, C.L. Bai, D.L. Fang, Y.F. Niu, H.~Sagawa, and H.Q. Zhang.
+\newblock Effect of tensor force on 2νββ and 0νββ decays in 76ge, 82se, 130te, and 136xe*.
+\newblock \emph{Chinese Physics C}, 49\penalty0 (7):\penalty0 074112, jul 2025.
+\newblock \doi{10.1088/1674-1137/adcf8f}.
+\newblock URL \url{https://doi.org/10.1088/1674-1137/adcf8f}.
+
+\end{thebibliography}

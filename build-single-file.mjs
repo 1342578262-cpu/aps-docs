@@ -10,11 +10,11 @@ const docsDir = path.join(root, 'docs')
 const files = [
   'index.md', 'quickstart.md', 'workflow.md', 'aps-writing.md',
   'srpa-survey.md', 'literature.md', 'figures.md', 'deliverables.md',
-  'how-to-edit.md', 'faq.md'
+  'nme-qrpa-qpvc.md', 'how-to-edit.md', 'faq.md'
 ]
 
 const md = new MarkdownIt({ html: true, linkify: true })
-md.use(katex, { throwOnError: false, macros: katexMacros })
+md.use(katex, { throwOnError: false, macros: katexMacros, output: 'html' })
 
 const usedHeadingIds = new Map()
 function slugify(text) {
@@ -36,7 +36,7 @@ md.renderer.rules.heading_open = (tokens, idx) => {
 }
 
 function renderMarkdown(source) {
-  let text = source
+  let text = source.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, '')
   text = text.replace(/::: tip\s*\r?\n([\s\S]*?)\r?\n:::/g, '<div class="note">$1</div>')
   usedHeadingIds.clear()
   return md.render(text)
@@ -63,7 +63,7 @@ const css = inlineKaTeXFonts(katexCss) + '\n' + customCss + '\n' + `
 html { scroll-behavior: smooth; }
 body { margin: 0; font-family: "Segoe UI", "Microsoft YaHei", sans-serif; color: #1f2937; background: #fcfcfa; line-height: 1.65; }
 .topbar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 12px; padding: 0 20px; height: 56px; background: #fff; border-bottom: 1px solid #e5e7eb; }
-.brand { font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.brand { font-weight: 700; display: flex; align-items: center; gap: 10px; color: #1f2937; text-decoration: none; }
 .brand-mark { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 8px; background: #0431fa; color: #fff; font-weight: 700; font-size: 12px; }
 .badge { padding: 2px 8px; border: 1px solid #e5e7eb; border-radius: 999px; font-size: 12px; color: #6b7280; }
 .menu-toggle { display: none; margin-left: auto; border: 1px solid #e5e7eb; background: #fff; border-radius: 8px; padding: 6px 12px; cursor: pointer; }
@@ -95,6 +95,19 @@ pre { background: #f6f7f8; border: 1px solid #e5e7eb; border-radius: 8px; paddin
 pre code { background: none; border: none; padding: 0; }
 .copy-btn { position: absolute; top: 8px; right: 8px; border: 1px solid #e5e7eb; background: #fff; border-radius: 6px; padding: 3px 10px; font-size: 12px; cursor: pointer; color: #6b7280; }
 .note { border-left: 4px solid #1a7f37; background: #eef7ef; padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 16px 0; }
+.cover { padding: 36px 0 8px; }
+.cover-name { margin: 0 0 10px; font-size: 42px; line-height: 1.15; color: #0431fa; }
+.cover-text { margin: 0 0 8px; font-size: 24px; font-weight: 600; color: #1f2937; }
+.cover-tagline { margin: 0 0 22px; font-size: 16px; color: #6b7280; }
+.cover-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.cover-action { display: inline-block; padding: 9px 18px; border-radius: 8px; font-size: 15px; font-weight: 600; text-decoration: none; }
+.cover-action.brand { background: #0431fa; color: #fff; }
+.cover-action.alt { border: 1px solid #e5e7eb; color: #1f2937; background: #fff; }
+.cover-action.alt:hover { border-color: #0431fa; color: #0431fa; }
+.feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 24px 0 8px; }
+.feature-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 18px; background: #fff; }
+.feature-card h3 { margin: 0 0 6px; font-size: 17px; color: #1f2937; }
+.feature-card p { margin: 0; color: #5a6270; font-size: 14px; line-height: 1.6; }
 .flow { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0; }
 .flow-node { flex: 1 1 120px; min-width: 120px; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; background: #fff; text-align: center; font-weight: 600; }
 .flow-node span { display: block; margin-top: 6px; font-weight: 400; font-size: 12px; color: #6b7280; }
@@ -107,6 +120,9 @@ summary { cursor: pointer; font-weight: 600; }
   .sidebar { display: none; position: static; height: auto; border-right: none; border-bottom: 1px solid #e5e7eb; }
   .sidebar.open { display: block; }
   .menu-toggle { display: inline-block; }
+  .feature-grid { grid-template-columns: 1fr; }
+  .cover-name { font-size: 32px; }
+  .cover-text { font-size: 20px; }
   .content { padding: 32px 24px 60px; }
   h1 { font-size: 28px; }
 }
@@ -116,11 +132,106 @@ summary { cursor: pointer; font-weight: 600; }
 }
 `
 
+function readTitle(raw, file) {
+  const frontmatter = /^---\r?\n([\s\S]*?)\r?\n---/.exec(raw)
+  if (frontmatter) {
+    const heroName = frontmatter[1].match(/^\s*name:\s*(.+)$/m)
+    if (heroName) return heroName[1].replace(/^["']|["']$/g, '').trim()
+    const fmTitle = frontmatter[1].match(/^\s*title:\s*(.+)$/m)
+    if (fmTitle) return fmTitle[1].replace(/^["']|["']$/g, '').trim()
+  }
+  const titleLine = raw.split(/\r?\n/).find((line) => line.startsWith('# '))
+  return titleLine ? titleLine.replace(/^#\s+/, '').trim() : file
+}
+
+function yamlValue(line, key) {
+  return line.slice(line.indexOf(key) + key.length).replace(/^:\s*/, '').trim().replace(/^["']|["']$/g, '')
+}
+
+function parseHomeFrontmatter(raw) {
+  const frontmatter = /^---\r?\n([\s\S]*?)\r?\n---/.exec(raw)
+  if (!frontmatter) return null
+  let hero = null
+  let actions = []
+  let features = []
+  let currentAction = null
+  let currentFeature = null
+  for (const line of frontmatter[1].split(/\r?\n/)) {
+    const t = line.trim()
+    if (!t || t.startsWith('#')) continue
+    if (t === 'hero:') { hero = {}; continue }
+    if (t === 'actions:' || t === 'features:') continue
+    if (t.startsWith('layout:')) continue
+    if (t.startsWith('- theme:')) {
+      currentFeature = null
+      currentAction = { theme: yamlValue(t, 'theme') }
+      actions.push(currentAction)
+      continue
+    }
+    if (t.startsWith('- title:')) {
+      currentAction = null
+      currentFeature = { title: yamlValue(t, 'title') }
+      features.push(currentFeature)
+      continue
+    }
+    if (hero && !currentAction && !currentFeature && /^(name|text|tagline):/.test(t)) {
+      const key = t.slice(0, t.indexOf(':'))
+      hero[key] = yamlValue(t, key)
+      continue
+    }
+    if (currentAction && /^(theme|text|link):/.test(t)) {
+      const key = t.slice(0, t.indexOf(':'))
+      currentAction[key] = yamlValue(t, key)
+      continue
+    }
+    if (currentFeature && /^(title|details):/.test(t)) {
+      const key = t.slice(0, t.indexOf(':'))
+      currentFeature[key] = yamlValue(t, key)
+      continue
+    }
+  }
+  return hero ? { hero, actions, features } : null
+}
+
+function escapeHtml(text) {
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
+function homeCoverHtml(fm) {
+  const hero = fm.hero
+  const actions = (fm.actions || [])
+    .map((action) => {
+      const theme = action.theme === 'brand' ? 'brand' : 'alt'
+      const link = (action.link || '#').replace(/^\//, '#')
+      return `<a class="cover-action ${theme}" href="${link}">${escapeHtml(action.text)}</a>`
+    })
+    .join('')
+  const features = (fm.features || [])
+    .map((feature) => `<div class="feature-card"><h3>${escapeHtml(feature.title)}</h3><p>${escapeHtml(feature.details)}</p></div>`)
+    .join('')
+  return [
+    '<div class="cover">',
+    `<h1 class="cover-name">${escapeHtml(hero.name || '')}</h1>`,
+    hero.text ? `<p class="cover-text">${escapeHtml(hero.text)}</p>` : '',
+    hero.tagline ? `<p class="cover-tagline">${escapeHtml(hero.tagline)}</p>` : '',
+    actions ? `<div class="cover-actions">${actions}</div>` : '',
+    '</div>',
+    features ? `<div class="feature-grid">${features}</div>` : ''
+  ].filter(Boolean).join('\n')
+}
+
 const sections = files.map((file) => {
   const raw = fs.readFileSync(path.join(docsDir, file), 'utf8')
-  const titleLine = raw.split(/\r?\n/).find((line) => line.startsWith('# '))
-  const title = titleLine ? titleLine.replace(/^#\s+/, '').trim() : file
+  const title = readTitle(raw, file)
   let html = renderMarkdown(raw)
+  const fm = parseHomeFrontmatter(raw)
+  if (fm && fm.hero && fm.hero.name) {
+    html = homeCoverHtml(fm) + '\n' + html
+  }
   html = html.replaceAll('/assets/2vbb_tikz_main.svg', svgDataUri)
   const toc = []
   const headingRe = /<h([23]) id="([^"]+)">([\s\S]*?)<\/h[23]>/g
@@ -137,8 +248,9 @@ const sections = files.map((file) => {
 
 const sectionMap = Object.fromEntries(sections.map((s) => [s.id, s]))
 const sidebarGroups = [
-  { text: '入门', items: ['index', 'quickstart', 'workflow'] },
+  { text: '入门', items: ['quickstart', 'workflow'] },
   { text: '教程', items: ['aps-writing', 'srpa-survey', 'literature', 'figures', 'deliverables'] },
+  { text: '研究笔记', items: ['nme-qrpa-qpvc'] },
   { text: '附录', items: ['faq', 'how-to-edit'] }
 ]
 const nav = sidebarGroups
@@ -163,7 +275,7 @@ const page = `<!DOCTYPE html>
 </head>
 <body>
 <header class="topbar">
-  <div class="brand"><span class="brand-mark">APS</span><span>Research Suite</span><span class="badge">单文件版</span></div>
+  <a class="brand" href="#index"><span class="brand-mark">APS</span><span>Research Suite</span><span class="badge">单文件版</span></a>
   <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">菜单</button>
 </header>
 <div class="layout">
