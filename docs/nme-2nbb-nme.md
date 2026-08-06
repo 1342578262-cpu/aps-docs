@@ -1,9 +1,5 @@
 ---
 title: 3. 2νββ 核矩阵元
-citations:
-  - "PhysRevC.105.044331"
-  - "Wu_2025"
-  - "Suhonen2013From"
 ---
 
 # 2νββ 核矩阵元（Nuclear Matrix Element）

@@ -187,7 +187,6 @@ function rewriteEqualWithOver(text) {
 
 function cleanMathLine(line) {
   let text = line
-  text = replaceCites(text)
   text = rewriteEqualWithOver(text)
   text = text.replace(/\\iiii|\\iii|\\ii|\\il|\\oo|\\ol/g, '')
   text = text.replace(/\\tag\{[^}]*\}/g, '')
@@ -496,13 +495,6 @@ function buildPage(spec) {
   activeCitationOrder = localOrder
 
   const output = []
-  if (localOrder.length > 0) {
-    output.push('---')
-    output.push('citations:')
-    for (const key of localOrder) output.push(`  - "${key}"`)
-    output.push('---')
-    output.push('')
-  }
   output.push(`# ${spec.title}`)
   output.push('')
   output.push(pageIntro)

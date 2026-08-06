@@ -88,14 +88,6 @@ function extractCitationOrder(src) {
   return order
 }
 
-function frontmatterCitations(src) {
-  const match = /^---\r?\n([\s\S]*?)\r?\n---/.exec(src)
-  if (!match) return []
-  const listMatch = /^citations:\s*\r?\n((?:\s*-\s*"[^"]*"\r?\n?)+)/m.exec(match[1])
-  if (!listMatch) return []
-  return [...listMatch[1].matchAll(/-\s*"([^"]*)"/g)].map((m) => m[1])
-}
-
 let cachedSignature = ''
 let cachedOrder = []
 
@@ -108,7 +100,7 @@ function getGlobalCitationOrder() {
   const order = []
   for (const file of noteFiles) {
     const src = fs.readFileSync(path.join(docsDir, file), 'utf8')
-    for (const key of [...frontmatterCitations(src), ...extractCitationOrder(src)]) {
+    for (const key of extractCitationOrder(src)) {
       if (!order.includes(key)) order.push(key)
     }
   }
