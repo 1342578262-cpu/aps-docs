@@ -7,7 +7,7 @@ if not exist "%NODE%" (
   exit /b 1
 )
 echo Building VitePress site...
-"%NODE%" node_modules\vitepress\bin\vitepress.js build docs
+"%NODE%" --max-old-space-size=4096 node_modules\vitepress\bin\vitepress.js build docs
 echo.
 echo Build finished. Now open it with start-preview.bat
 pause

@@ -1,11 +1,15 @@
 :root {
-  --vp-layout-max-width: 1900px;
+  --vp-layout-max-width: 1800px;
   --vp-content-max-width: 1200px;
   --vp-content-width: 1080px;
 }
 
 .vp-doc {
   font-size: 16px;
+}
+
+.vp-doc a {
+  text-decoration: none;
 }
 
 .VPDoc .content-container {
@@ -60,7 +64,32 @@
   overflow-x: auto;
   overflow-y: hidden;
   max-width: 100%;
+  scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
+}
+
+.vp-doc .katex-display::-webkit-scrollbar {
+  display: none;
+}
+
+.vp-doc a[href*="#eq-"],
+.vp-doc .katex a {
+  color: var(--vp-c-brand-1, #0431fa);
+  text-decoration: none;
+}
+
+.vp-doc a[href*="#eq-"]:hover,
+.vp-doc .katex a:hover {
+  color: var(--vp-c-brand-2, #3151d6);
+}
+
+.vp-doc a[href*="#ref-"] {
+  color: #c62828;
+  text-decoration: none;
+}
+
+.vp-doc a[href*="#ref-"]:hover {
+  color: #b71c1c;
 }
 
 @media (max-width: 768px) {
@@ -70,6 +99,3 @@
   }
 }
 
-body {
-  zoom: 1.05;
-}

@@ -1,53 +1,60 @@
 import { defineConfig } from 'vitepress'
 import { katex } from '@mdit/plugin-katex'
 import katexMacros from '../../scripts/katex-macros.mjs'
+import citationPlugin from '../../scripts/citations.mjs'
+import autoNumberMath from '../../scripts/auto-number-math.mjs'
+import refsPlugin from '../../scripts/refs.mjs'
+import publicAssetsPlugin from '../../scripts/public-assets.mjs'
 
 export default defineConfig({
   base: '/aps-docs/',
   lang: 'zh-CN',
   title: 'APS Research Suite',
-  description: 'Codex 自定义 skill 文档：APS 论文写作 + SRPA 文献调研',
+  description: '两体流矩阵元推导科研笔记',
   markdown: {
     config: (md) => {
-      md.use(katex, { throwOnError: false, macros: katexMacros, output: 'html' })
+      md.use(refsPlugin, { base: '/aps-docs/' })
+      md.use(autoNumberMath)
+      md.use(katex, {
+        throwOnError: false,
+        macros: katexMacros,
+        output: 'html',
+        trust: (context) => context.command === '\\href'
+      })
+      md.use(citationPlugin, { base: '/aps-docs/' })
+      md.use(publicAssetsPlugin)
     }
   },
   themeConfig: {
     nav: [
-      { text: '快速开始', link: '/quickstart' },
-      { text: '论文写作', link: '/aps-writing' },
-      { text: '文献调研', link: '/srpa-survey' },
-      { text: 'FAQ', link: '/faq' }
+      { text: '快速开始', link: '/quickstart' }
     ],
     sidebar: [
       {
-        text: '入门',
-        items: [
-          { text: '1. 快速开始', link: '/quickstart' },
-          { text: '2. 工作流总览', link: '/workflow' }
-        ]
-      },
-      {
-        text: '教程',
-        items: [
-          { text: '3. APS 论文写作', link: '/aps-writing' },
-          { text: '4. SRPA 文献调研', link: '/srpa-survey' },
-          { text: '5. 文献与 BibTeX', link: '/literature' },
-          { text: '6. 图表检查', link: '/figures' },
-          { text: '7. 交付规范', link: '/deliverables' },
-        ]
-      },
-      {
         text: '研究笔记',
         items: [
-          { text: '跃迁矩阵元：QRPA + QPVC', link: '/nme-qrpa-qpvc' }
-        ]
-      },
-      {
-        text: '附录',
-        items: [
-          { text: '8. FAQ', link: '/faq' },
-          { text: '9. 如何修改本站', link: '/how-to-edit' }
+          { text: '1. 快速开始', link: '/quickstart' },
+          {
+            text: '2. 两体流矩阵元的推导',
+            collapsed: true,
+            items: [
+              { text: '谐振子基展开', link: '/两体流矩阵元的推导/nme-basis-expansion' },
+              { text: 'GT 单体流', link: '/两体流矩阵元的推导/nme-gt-1b' },
+              {
+                text: 'GT 双体流',
+                collapsed: true,
+                items: [
+                  { text: '双体流 1：Term 01A–04D', link: '/两体流矩阵元的推导/nme-gt-2b-1' },
+                  { text: '双体流 2：Term 05E–08H', link: '/两体流矩阵元的推导/nme-gt-2b-2' },
+                  { text: '双体流 3：Term 09I–10J 与交换项', link: '/两体流矩阵元的推导/nme-gt-2b-3' },
+                  { text: '双体流 4：动量项', link: '/两体流矩阵元的推导/nme-gt-2b-4' }
+                ]
+              }
+            ]
+          },
+          { text: '3. 2νββ 核矩阵元', link: '/nme-2nbb-nme' },
+          { text: '4. 附录', link: '/nme-appendix' },
+          { text: '5. 参考文献', link: '/references' }
         ]
       }
     ],

@@ -3,21 +3,18 @@ layout: home
 
 hero:
   name: APS Research Suite
-  text: 从文献调研到论文写作的一体化科研工作流
-  tagline: RevTeX 4.2 论文写作 · SRPA 文献调研 · 视觉验收
+  text: 两体流矩阵元推导科研笔记
+  tagline: 基展开 · GT 单体流 / GT 双体流 · 2νββ 核矩阵元
   actions:
     - theme: brand
       text: 快速开始
       link: /quickstart
-    - theme: alt
-      text: 论文写作
-      link: /aps-writing
 
 features:
-  - title: 论文写作
-    details: RevTeX 4.2 骨架、60 篇文献笔记、BibTeX 管理、多遍编译、PDF 页面渲染验收。
-  - title: 文献调研
-    details: INSPIRE / Crossref / arXiv / Semantic Scholar 检索，DOI 核验"已发表"，Unpaywall 与 APS harvest 拿全文。
-  - title: 视觉验收
-    details: PDF 页面渲染成 PNG，交给 Qwen 视觉检查图表清晰度、图注与编号。
+  - title: 基展开
+    details: 单粒子波函数投影到球谐振子基，配合 Moshinsky 变换处理 Jacobi 坐标。
+  - title: GT 单体流 / 双体流
+    details: Gamow-Teller 算符约化矩阵元的逐步推导，两体流分为 Term 01A–04D 到动量项。
+  - title: 2νββ 核矩阵元
+    details: QRPA 框架下的 2νββ 核矩阵元公式，附自动生成的 BibTeX 参考文献。
 ---

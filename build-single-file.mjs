@@ -4,17 +4,34 @@ import { fileURLToPath } from 'node:url'
 import MarkdownIt from 'markdown-it'
 import { katex } from '@mdit/plugin-katex'
 import katexMacros from './scripts/katex-macros.mjs'
+import citationPlugin from './scripts/citations.mjs'
+import autoNumberMath from './scripts/auto-number-math.mjs'
+import refsPlugin from './scripts/refs.mjs'
+import publicAssetsPlugin from './scripts/public-assets.mjs'
 
 const root = path.dirname(fileURLToPath(import.meta.url))
 const docsDir = path.join(root, 'docs')
 const files = [
-  'index.md', 'quickstart.md', 'workflow.md', 'aps-writing.md',
-  'srpa-survey.md', 'literature.md', 'figures.md', 'deliverables.md',
-  'nme-qrpa-qpvc.md', 'how-to-edit.md', 'faq.md'
+  'index.md', 'quickstart.md',
+  '两体流矩阵元的推导/nme-basis-expansion.md', '两体流矩阵元的推导/nme-gt-1b.md',
+  '两体流矩阵元的推导/nme-gt-2b-1.md', '两体流矩阵元的推导/nme-gt-2b-2.md',
+  '两体流矩阵元的推导/nme-gt-2b-3.md', '两体流矩阵元的推导/nme-gt-2b-4.md',
+  'nme-2nbb-nme.md',
+  'nme-appendix.md',
+  'references.md'
 ]
 
 const md = new MarkdownIt({ html: true, linkify: true })
-md.use(katex, { throwOnError: false, macros: katexMacros, output: 'html' })
+md.use(refsPlugin)
+md.use(autoNumberMath)
+md.use(katex, {
+  throwOnError: false,
+  macros: katexMacros,
+  output: 'html',
+  trust: (context) => context.command === '\\href'
+})
+md.use(citationPlugin, { base: '' })
+md.use(publicAssetsPlugin)
 
 const usedHeadingIds = new Map()
 function slugify(text) {
@@ -35,11 +52,24 @@ md.renderer.rules.heading_open = (tokens, idx) => {
   return `<h${token.tag.slice(1)} id="${id}">`
 }
 
-function renderMarkdown(source) {
+function parseFrontmatterCitations(source) {
+  const match = /^---\r?\n([\s\S]*?)\r?\n---/.exec(source)
+  if (!match) return []
+  const listMatch = /^citations:\s*\r?\n((?:\s*-\s*"[^"]*"\r?\n?)+)/m.exec(match[1])
+  if (!listMatch) return []
+  return [...listMatch[1].matchAll(/-\s*"([^"]*)"/g)].map((m) => m[1])
+}
+
+function renderMarkdown(source, file) {
+  const citations = parseFrontmatterCitations(source)
   let text = source.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, '')
   text = text.replace(/::: tip\s*\r?\n([\s\S]*?)\r?\n:::/g, '<div class="note">$1</div>')
   usedHeadingIds.clear()
-  return md.render(text)
+  const id = path.basename(file, '.md')
+  return md.render(text, {
+    frontmatter: { citations },
+    refs: { mode: 'hash', anchorPrefix: `eq-${id}-`, pageKey: file }
+  })
 }
 
 function inlineKaTeXFonts(css) {
@@ -71,6 +101,16 @@ body { margin: 0; font-family: "Segoe UI", "Microsoft YaHei", sans-serif; color:
 .sidebar { position: sticky; top: 56px; align-self: start; height: calc(100vh - 56px); overflow-y: auto; padding: 24px 16px; border-right: 1px solid #e5e7eb; background: #fff; }
 .sidebar a { display: block; padding: 6px 10px; border-radius: 6px; color: #1f2937; text-decoration: none; font-size: 14px; }
 .sidebar a:hover, .sidebar a.active { background: #eef1ff; color: #0431fa; }
+.nav-group-details { margin: 2px 0; }
+.nav-group-details summary { display: flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 6px; color: #1f2937; font-size: 14px; font-weight: 500; cursor: pointer; list-style: none; user-select: none; }
+.nav-group-details summary::-webkit-details-marker { display: none; }
+.nav-group-details summary:hover { background: #eef1ff; color: #0431fa; }
+.nav-caret { width: 0; height: 0; border-left: 5px solid currentColor; border-top: 5px solid transparent; border-bottom: 5px solid transparent; transition: transform 0.15s; }
+.nav-group-details[open] > summary .nav-caret { transform: rotate(90deg); }
+.nav-subgroup { display: flex; flex-direction: column; }
+.nav-subgroup a { padding-left: 20px; font-weight: 400; }
+.nav-subgroup .nav-subgroup a { padding-left: 34px; }
+.nav-group-details .nav-group-details summary { padding-left: 16px; }
 .nav-group-title { margin: 18px 10px 6px; font-size: 12px; font-weight: 600; color: #7a8291; }
 .nav-group:first-child .nav-group-title { margin-top: 0; }
 .content { padding: 48px 32px 96px; min-width: 0; max-width: 1200px; margin: 0 auto; }
@@ -112,8 +152,8 @@ pre code { background: none; border: none; padding: 0; }
 .flow-node { flex: 1 1 120px; min-width: 120px; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; background: #fff; text-align: center; font-weight: 600; }
 .flow-node span { display: block; margin-top: 6px; font-weight: 400; font-size: 12px; color: #6b7280; }
 .flow-arrow { align-self: center; color: #6b7280; }
-details { border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px 16px; margin: 10px 0; background: #fff; }
-summary { cursor: pointer; font-weight: 600; }
+.content details { border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px 16px; margin: 10px 0; background: #fff; }
+.content summary { cursor: pointer; font-weight: 600; }
 .katex { font-size: 1.05em; }
 @media (max-width: 860px) {
   .layout { grid-template-columns: 1fr; }
@@ -227,7 +267,7 @@ function homeCoverHtml(fm) {
 const sections = files.map((file) => {
   const raw = fs.readFileSync(path.join(docsDir, file), 'utf8')
   const title = readTitle(raw, file)
-  let html = renderMarkdown(raw)
+  let html = renderMarkdown(raw, file)
   const fm = parseHomeFrontmatter(raw)
   if (fm && fm.hero && fm.hero.name) {
     html = homeCoverHtml(fm) + '\n' + html
@@ -243,23 +283,49 @@ const sections = files.map((file) => {
       text: hm[3].replace(/<[^>]+>/g, '').trim()
     })
   }
-  return { id: file.replace('.md', ''), title, html, toc }
+  return { id: path.basename(file, '.md'), title, html, toc }
 })
 
 const sectionMap = Object.fromEntries(sections.map((s) => [s.id, s]))
 const sidebarGroups = [
-  { text: '入门', items: ['quickstart', 'workflow'] },
-  { text: '教程', items: ['aps-writing', 'srpa-survey', 'literature', 'figures', 'deliverables'] },
-  { text: '研究笔记', items: ['nme-qrpa-qpvc'] },
-  { text: '附录', items: ['faq', 'how-to-edit'] }
+  {
+    text: '研究笔记',
+    items: [
+      'quickstart',
+      {
+        text: '2. 两体流矩阵元的推导',
+        items: [
+          'nme-basis-expansion',
+          'nme-gt-1b',
+          {
+            text: 'GT 双体流',
+            items: ['nme-gt-2b-1', 'nme-gt-2b-2', 'nme-gt-2b-3', 'nme-gt-2b-4']
+          }
+        ]
+      },
+      'nme-2nbb-nme',
+      'nme-appendix',
+      'references'
+    ]
+  }
 ]
+function renderNavItems(items) {
+  return (items || [])
+    .map((item) => {
+      if (typeof item === 'string') {
+        if (!sectionMap[item]) return ''
+        return `<a href="#${item}">${sectionMap[item].title}</a>`
+      }
+      const children = renderNavItems(item.items || [])
+      if (!children) return ''
+      return `<details class="nav-group-details"><summary><span>${item.text}</span><span class="nav-caret"></span></summary>\n<div class="nav-subgroup">${children}</div>\n</details>`
+    })
+    .filter(Boolean)
+    .join('\n')
+}
 const nav = sidebarGroups
   .map((group) => {
-    const links = group.items
-      .filter((id) => sectionMap[id])
-      .map((id) => `<a href="#${id}">${sectionMap[id].title}</a>`)
-      .join('\n')
-    return `<div class="nav-group"><div class="nav-group-title">${group.text}</div>\n${links}</div>`
+    return `<div class="nav-group"><div class="nav-group-title">${group.text}</div>\n${renderNavItems(group.items)}</div>`
   })
   .join('\n')
 const bodies = sections.map((s) => `<section id="${s.id}">${s.html}</section>`).join('\n')
@@ -325,6 +391,17 @@ document.addEventListener('click', function (e) {
   var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
   if (!a) return;
   var id = a.getAttribute('href').slice(1);
+  var anchorEl = document.getElementById(id);
+  if (anchorEl && !sectionIds[id]) {
+    var ownerSection = anchorEl.closest('section');
+    if (ownerSection && !ownerSection.classList.contains('active')) {
+      e.preventDefault();
+      showSection(ownerSection.id);
+      setTimeout(function () { anchorEl.scrollIntoView(); }, 0);
+      if (history.replaceState) history.replaceState(null, '', '#' + id);
+      return;
+    }
+  }
   if (!sectionIds[id]) return;
   e.preventDefault();
   showSection(id);
