@@ -547,6 +547,7 @@ function buildPage(spec) {
     let prose = trimmed
     prose = rewriteEqualWithOver(prose)
     prose = prose.replace(/\\indent/g, '')
+    prose = prose.replace(/In the code\s*：?/g, '代码中：')
     prose = prose.replace(/\{\\color\{red\}\s*([^{}]*)\}/g, '**$1**')
     prose = prose.replace(/\\textcolor\{red\}\{([^}]*)\}/g, '**$1**')
     prose = prose.replace(/\\textbf\{([^}]*)\}/g, '**$1**')

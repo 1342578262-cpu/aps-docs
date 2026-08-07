@@ -8,6 +8,13 @@ function replaceInMath(text, buildHref) {
   })
 }
 
+function hashTarget(key, refs, fallbackPrefix) {
+  const entry = refs[key]
+  if (!entry) return `#${fallbackPrefix}${key}`
+  const targetPage = entry.page.replace(/\/+$/, '').split('/').pop().replace(/\.html$/, '')
+  return `#eq-${targetPage}-${key}`
+}
+
 export default function refsPlugin(md, options = {}) {
   md.core.ruler.before('normalize', 'aps-refs', (state) => {
     const mathMap = computeMathMap()
@@ -16,7 +23,7 @@ export default function refsPlugin(md, options = {}) {
     const anchorPrefix = state.env?.refs?.anchorPrefix || ''
     const base = options.base || ''
     const buildHref = mode === 'hash'
-      ? (key) => `#${anchorPrefix}${key}`
+      ? (key) => hashTarget(key, refs, anchorPrefix)
       : (key) => {
           const entry = refs[key]
           if (!entry) return `#eq-${key}`
@@ -40,7 +47,7 @@ export default function refsPlugin(md, options = {}) {
             const entry = refs[key]
             if (!entry) return all
             const href = mode === 'hash'
-              ? `#${anchorPrefix}${key}`
+              ? hashTarget(key, refs, anchorPrefix)
               : `${entry.page}#eq-${key}`
             return `[${entry.display || entry.num}](${href})`
           })
